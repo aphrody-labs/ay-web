@@ -1,0 +1,86 @@
+# The only identity and configuration source of the repository. Code, CI and docs read names from here.
+
+[product]
+name = "aphrody"
+display = "Aphrody"
+repo = "ay"
+owner = "aphrody-dev"        # GitHub account that owns this repository
+cli = "ay"
+
+[orgs]
+dev = "aphrody-dev"          # this repository and its CI
+labs = "aphrody-labs"        # forks of upstreams (bun with craft, git stack, ...)
+
+[legacy]
+# The old monorepo, renamed (not archived) on 2026-11-16; tools/legacy.ts inventories it so nothing regresses.
+repo = "aphrody-labs/legacy"
+
+[recovery]
+# Archived repositories whose sources are crates.io tarballs; tools/recover.ts clones them to find where a lost crate survives.
+archives = ["aphrody-labs/bun-os", "aphrody-labs/bun-distribution"]
+
+[domains]
+# Owned by the aphrody monorepo (aphrody-dev/aphrody); read-only here. Never change their DNS, zones or routes from
+# this repository: per-domain roles are decided once, at the end, by the owner of that repository.
+root = "aphrody.com"
+app = "aphrody.app"
+owner = "aphrody"            # key of [repos]
+
+[products]
+# One entry per product; the feature matrix (docs/features.toml) refers to these keys.
+os = { owner = "aphrody", title = "Aphrody OS", reference = "https://googlebook.google/", keywords = ["os", "kernel", "linux", "boot", "installer", "device", "hardware", "driver", "wayland", "desktop", "shell", "waydroid", "android", "aosp", "gpu", "vulkan", "audio", "fleet"] }
+browser = { owner = "browser", title = "Aphrody Browser", reference = "https://chromium.googlesource.com/", keywords = ["browser", "chromium", "chrome", "cef", "webkit", "servo", "blink", "v8", "playwright", "puppeteer", "cdp", "webview", "tauri"] }
+search = { owner = "aphrody", title = "Aphrody Search", reference = "https://www.google.com/?hl=fr", keywords = ["search", "crawl", "index", "rag", "embed", "rank", "google", "gemini", "llm", "llama", "infer", "ai", "agent", "a2a", "mcp", "memory"] }
+cloud = { owner = "aphrody", title = "Aphrody Cloud", reference = "https://developers.cloudflare.com/workers/", keywords = ["cloud", "edge", "deploy", "gateway", "worker", "cloudflare", "r2", "dns", "tls", "http", "api", "server", "sql", "db", "vault", "mail", "apify", "ai-os"] }
+craft = { owner = "craft-anything", title = "Craft Anything", reference = "https://github.com/storytold/craft-anything", keywords = ["craft", "artcraft", "canvas", "video", "image", "game", "render", "3d", "media"] }
+brand = { owner = "ay", title = "Aphrody brand", reference = "https://design.google/", keywords = ["brand", "identity", "design", "m3", "theme", "token", "font", "icon", "assets", "i18n"] }
+
+# The ecosystem (2026-11-17). aphrody-dev/aphrody is the complete OS in pure Rust and the source of truth; this
+# repository is its SDK, in any best-fit language: C ABI, OpenAPI, docs, spec, standards,
+# corelib, libc and the design system. One checkout per repo locally and one repo per unit on GitHub.
+[registries]
+npm = "@aphrody"             # npm org scope for published Bun/TS packages
+crates = "aphrody-"          # prefix of the crates the organization already published on crates.io (legacy pipeline); read by tools/bun-native.ts
+own_crates = "ay-"           # prefix of this repository's own crates and the npm unit prefix (naming.toml scheme: {id}-{unit})
+
+[repos]
+# A local `checkout` hint lives in the git-ignored ay.local.toml (a developer convenience): no tool requires it to exist, each one skips or falls back when it is absent.
+# kind: os | sdk | runtime | craft | plugin | app | browser | unix | ai | android | nt | design | org | site | standard.
+# Only the os repository defines the system; the rest build on it. A row of the feature matrix names its owner by key.
+aphrody = { slug = "aphrody-dev/aphrody", kind = "os" }      # complete OS, pure Rust, source of truth
+ay = { slug = "aphrody-dev/ay", kind = "sdk" }                                             # C ABI, OpenAPI, docs, spec, corelib, libc, design system
+bun = { slug = "aphrody-labs/bun", kind = "runtime" }                 # Bun fork and its plugins
+craft-anything = { slug = "aphrody-labs/craft-anything", kind = "craft" }                 # replication engine
+nie = { slug = "aphrody-labs/nie", kind = "craft" }                  # football games built as craft jobs
+claude = { slug = "aphrody-labs/claude", kind = "plugin" }                                 # agent config and the aphrody plugin
+shenron = { slug = "aphrody-labs/shenron", kind = "app" }
+browser = { slug = "aphrody-labs/browser", kind = "browser" }   # one browser monorepo: Bun, Servo, Obscura, agent-browser, CEF, Chromium
+anu = { slug = "aphrody-dev/anu", kind = "unix" }                    # Aphrody's Not Unix: uutils, GNU, Linux on the Arch family, Nix; depends on no other Aphrody repository
+ai-os = { slug = "aphrody-dev/ai-os", kind = "ai" }               # agent kernel, ai-os (MCP, A2A), model, inference and RAG, extracted from legacy
+aydroid = { slug = "aphrody-dev/aydroid", kind = "android" }                              # AOSP with Aphrody in place of Android
+aynt = { slug = "aphrody-dev/aynt", kind = "nt" }                                          # free Windows-compatible operating system
+open = { slug = "aphrody-labs/open", kind = "app" }                  # open ecosystem monorepo (opencode, opentui, models.dev, ai-router)
+auto = { slug = "aphrody-labs/auto", kind = "app" }                  # workflow automation, office suite and scraping
+aphrody-m3 = { slug = "aphrody-labs/aphrody-m3", kind = "design" }                         # Material 3 UI packages, icons, fonts; consumes the ay token pipeline
+rosegriffon = { slug = "rose-griffon/rosegriffon", kind = "site" }  # moved to the rose-griffon org; owned by its own agent
+standard = { slug = "aphrody-labs/.github", kind = "standard" }  # org standard 1.0.0, defaults, reusable CI, profile
+
+# SDK toolchain (ADR-0008): LLVM-first and cross-target, any language that fits the unit.
+[sdk]
+languages = ["c", "cpp", "objc", "asm", "wat", "rust", "zig", "wgsl", "python", "dotnet", "bun"]
+toolchain = ["llvm", "tree-sitter"]
+modes = ["ffi", "lto", "aot", "c-abi", "msvc-abi"]
+arch = ["x86_64", "aarch64", "riscv64", "wasm32", "wasm64"]
+os = ["linux", "windows", "macos", "android", "freestanding", "wasi", "browser"]
+gpu = ["webgpu", "vulkan", "d3d12", "metal"]
+
+[matrix]
+# Owner of the feature-matrix rows of a product that has no owner of its own (the platform standards rows).
+platform_owner = "ay"
+
+[audit.bun-native]
+# tools/bun-native.ts: the registry crate (after [registries].crates), directories never scanned (vendored, generated,
+# archived or legacy trees), and org originals that are detached upstream mirrors, not first-party code.
+registry = "n2b-registry"
+exclude = ["node_modules", "third_party", "vendor", "target", "dist", "generated", "coverage", "fixtures", "testdata", "legacy", "archive", "archived", "forks", "Externals", "external", "extern", ".git"]
+mirrors = ["depot_tools", "wayland-c", "steam-runtime-tools", "steamos-manager", "zig", "binutils-gdb", "dash", "readline", "make", "gnu-findutils", "gnu-sed", "gawk", "bash", "tao", "scap", "tauri-action"]

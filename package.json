@@ -1,0 +1,39 @@
+{
+  "name": "ay",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "ay": "./apps/ay/src/cli.ts"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*",
+      "packages/ai-os/engines/*",
+      "packages/ai-os/protocols/*",
+      "packages/env-kit/*",
+      "apps/*"
+    ],
+    "catalog": {
+      "@types/bun": "1.4.4",
+      "typescript": "7.0.2"
+    }
+  },
+  "scripts": {
+    "features": "bun tools/features.ts",
+    "abi": "bun tools/abi.ts",
+    "submodules": "bun tools/submodules.ts",
+    "deploy": "bun tools/deploy.ts",
+    "sessions": "bun tools/claude-sessions.ts",
+    "check": "bun tools/features.ts --check && bun tools/submodules.ts --check && bun tools/paths.ts && bun tools/private-gate.ts && bun tools/abi.ts --check && bun check --no-script && bun test ./tools/ ./packages/chromium-releases ./packages/org-mirror ./packages/edge-stack ./apps/chromium-dash ./apps/ay ./apps/web ./packages/chromium/test/version.test.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "tree-sitter-c": "0.24.1",
+    "tree-sitter-python": "0.25.0",
+    "tree-sitter-rust": "0.24.0",
+    "web-tree-sitter": "0.27.2"
+  },
+  "patchedDependencies": {
+    "@ag-ui/core@1.0.1": "patches/ag-ui-core-1.0.1.patch"
+  }
+}
